@@ -30,8 +30,10 @@ areg <- function(vars, data) {
     print(summary(model))
     
     # Extract the intercept
-    icpt <- getfe(model, ef='zm2')
-    cons <- c(icpt["icpt.1",1],rep(NA, 3))
+    icpt <- getfe(model, ef='zm2', robust = TRUE)
+    icpt$t_value <- icpt$effect/icpt$se
+    icpt$p_value <- 2 * pt(-abs(icpt$t_value), df = model$df)
+    cons <- c(icpt["icpt.1", c("effect", "se", "t_value", "p_value")])
     
     # Print model summary with constant
     summary_model <- rbind(summary(model)$coefficients,cons)
