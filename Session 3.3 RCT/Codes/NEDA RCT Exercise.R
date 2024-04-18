@@ -8,8 +8,12 @@ packages <- c("tidyverse", "dplyr", "haven", "lfe");for(pack in packages){
   rm(pack)
 }
 
+#Set working director
+setwd(here("Session 3.3 RCT/Codes"))
+
+
 # Load the stata file
-df <- read_dta("Session 3.3 RCT/Codes/ipa-neda_rctexercise.dta")
+df <- read_dta("ipa-neda_rctexercise.dta")
 
 # Balance and Outcome variables
 balance_vars <- c("age", "hhmemnum", "educ", "lit", "hunger6m")
