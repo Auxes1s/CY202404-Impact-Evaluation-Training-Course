@@ -3,7 +3,7 @@
 
 clear all 
 
-use  "C:\Users\admin\OneDrive - University of the Philippines\Desktop\CY202404 Impact Evaluation Training Course\Session 3.3 RCT\Codes\ipa-neda_rctexercise.dta"
+use  "ipa-neda_rctexercise.dta"
 
 
 /******************************************************************************
