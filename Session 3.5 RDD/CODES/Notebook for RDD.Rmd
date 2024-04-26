@@ -1,5 +1,27 @@
-#INSTALL THE PACKAGES
-packages <- c("tidyverse", "haven", "gtsummary", "ggpubr", "ggplot2", "rdrobust", "rddensity");for(pack in packages){
+---
+title: "Notebook for Regression Discontinuity Design (RDD)"
+author:
+- name: Aleli D. Kraft, PhD
+
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output:
+  html_document:
+    theme: lumen
+    toc: yes
+    toc_float: yes
+    toc_depth: 4
+    number_sections: no
+    highlight: pygments
+    fig_caption: yes
+editor_options:
+  markdown:
+    wrap: 72
+---
+
+# Codes for Regression Discontinuity Design
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+packages <- c("tidyverse", "haven", "gtsummary", "ggpubr", "ggplot2", "rdrobust", "rddensity", "here");for(pack in packages){
   if(!require(pack, character.only = TRUE, quietly = TRUE)){
     install.packages(pack, dependencies = TRUE)
     require(pack, character.only = TRUE)
@@ -8,39 +30,33 @@ packages <- c("tidyverse", "haven", "gtsummary", "ggpubr", "ggplot2", "rdrobust"
   rm(pack)
 };theme_set(theme_pubclean())
 
+```
 
-#################################################################
-#################################################################
-######################SLIDE 2####################################
+# Slide 2
+
+```{r}
 #Load dataset
-hisp_data <- read_dta("evaluation.dta")
+hisp_data <- read_dta(here("evaluation.dta"))
 hisp_data <- hisp_data %>%
   mutate(D = ifelse(poverty_index > 58, "> 58", "<= 58"))
 
 #Check whether there is any evidence of manipulation of the eligibility index 
 ggplot(hisp_data, aes(x = poverty_index)) + 
-  geom_vline(xintercept = 58, type = '-') +
+  geom_vline(xintercept = 58, linetype = 'dotted') +
   geom_density()+
   ggtitle("KDE Plot of Poverty index")
 
 # rdplotdensity(rdd = rddensity(hisp_data$poverty_index, c = 58), 
 #               X = hisp_data$poverty_index, 
 #               type = "both")
+```
 
+# Slide 3
 
-#################################################################
-#################################################################
-######################SLIDE 3####################################
+```{r, warning = FALSE}
 #Categorize > 58 and <= 58
 hisp_data_treatment <- hisp_data %>%
   filter(treatment_locality == 1) 
-
-# Plotting
-ggplot(hisp_data_treatment, aes(y = enrolled, x = poverty_index, color = factor(D))) +
-  geom_vline(xintercept = 58) +
-  geom_point() +
-  labs(x = "Poverty Index", y = "Enrolled")
-
 #Can you apply a sharp RDD? 
 rdplot(y = hisp_data_treatment$enrolled,
        x = hisp_data_treatment$poverty_index,
@@ -51,12 +67,18 @@ rdplot(y = hisp_data_treatment$enrolled,
        y.label = "Outcome variable (Enrolled)"
 )
 
+# Plotting
+ggplot(hisp_data_treatment, aes(y = enrolled, x = poverty_index, color = factor(D))) +
+  geom_vline(xintercept = 58) +
+  geom_point() +
+  labs(x = "Poverty Index", y = "Enrolled")
 
 
+```
 
-#################################################################
-#################################################################
-######################SLIDE 4####################################
+# Slide 4
+
+```{r}
 # Normalize the poverty index at "0"
 hisp_data_model <- hisp_data %>%
   mutate(poverty_index_left = ifelse(poverty_index <= 58, poverty_index - 58, 0),
@@ -73,11 +95,11 @@ hisp_data_model$he_pred1<- reg_model$fitted.values
 # Plotting
 ggplot(hisp_data_model, aes(x = poverty_index, y = he_pred1, color = factor(D))) +
   geom_point() + labs(x = "Poverty Index", y = "Predicted Health Expenditures")
+```
 
+# Slide 5
 
-#################################################################
-#################################################################
-######################SLIDE 5####################################
+```{r}
 rdd <- rdrobust(
   y = hisp_data_model$health_expenditures,
   x = hisp_data_model$poverty_index,
@@ -85,10 +107,11 @@ rdd <- rdrobust(
 )
 
 summary(rdd)
+```
 
-#################################################################
-#################################################################
-######################SLIDE 6####################################
+# Slide 6
+
+```{r}
 # Define the model formula
 model_formula <- health_expenditures ~ eligible + poverty_index_left + poverty_index_right +
   age_hh + age_sp + educ_hh + educ_sp + female_hh + indigenous +
@@ -100,10 +123,11 @@ reg_model_cov <- lm(model_formula, data = hisp_data_model)
 # Summarize the regression results
 summary(reg_model_cov)
 
+```
 
-#################################################################
-#################################################################
-######################SLIDE 7####################################
+# Slide 7
+
+```{r}
 # Generating higher order terms
 hisp_data_model <- hisp_data_model %>%
   mutate(
@@ -127,10 +151,11 @@ reg_model_cov_polynomial <- lm(model_formula, data = hisp_data_model)
 # Summarize the regression results
 summary(reg_model_cov_polynomial)
 
+```
 
+# Slide 8
 
-#################################################################
-#################################################################
+```{r}
 ######################SLIDE 8####################################
 hisp_data_model$he_pred2 <- reg_model_cov_polynomial$fitted.values
 
@@ -138,11 +163,11 @@ hisp_data_model$he_pred2 <- reg_model_cov_polynomial$fitted.values
 ggplot(hisp_data_model, aes(x = poverty_index, y = he_pred2, color = factor(D))) +
   geom_point() + labs(x = "Poverty Index", y = "Predicted Health Expenditures")
 
+```
 
+# Slide 9
 
-#################################################################
-#################################################################
-######################SLIDE 9####################################
+```{r}
 # Filter the data
 filtered_data <- filter(hisp_data, round == 0 & treatment_locality == 1)
 
@@ -158,11 +183,11 @@ ggplot(filtered_data, aes(x = poverty_index, y = he_pred3, color = factor(D))) +
   labs(x = "Poverty Index", y = "Predicted Health Expenditures",
        title = "Predicted Health Expenditures vs. Poverty Index")
 
+```
 
+# Slide 10
 
-#################################################################
-#################################################################
-######################SLIDE 10####################################
+```{r}
 rdd <- rdrobust(
   y = filtered_data$health_expenditures,
   x = filtered_data$poverty_index,
@@ -170,3 +195,5 @@ rdd <- rdrobust(
 )
 
 summary(rdd)
+
+```
