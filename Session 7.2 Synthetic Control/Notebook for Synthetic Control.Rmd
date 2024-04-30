@@ -1,0 +1,131 @@
+---
+title: "Notebook for Difference in Differences"
+author:
+- name: Karl Jandoc, PhD
+  affiliation: UP School of Economics
+
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output:
+  html_document:
+    theme: lumen
+    code_folding: show
+    toc: yes
+    toc_float: yes
+    toc_depth: 4
+    number_sections: no
+    highlight: pygments
+    fig_caption: yes
+editor_options:
+  markdown:
+    wrap: 72
+---
+
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+#Install packages
+library(dplyr)
+library(kernlab)
+library(optimx)
+library(rgenoud)
+library(LowRankQP)
+library(Synth)
+library(SCtools)
+```
+# Load Dataset
+```{r}
+#Reposting the codes to fix the problem with data.prep by
+#forcing the data as a dataframe
+
+# generating stateno
+load("C:\\Users\\admin\\Downloads\\smoking.rda")
+
+
+smoking <- smoking[order(smoking$state),]
+smoking$stateno2 <- as.numeric(with(smoking, ave(state, year, FUN = seq_along)))
+
+smoking <- as.data.frame(smoking)
+smoking %>% head()
+
+```
+
+# Compute for the weights
+```{r}
+# converting the panel data via dataprep
+dataprep.out <- dataprep(
+  foo = smoking,
+  predictors = c(
+    "lnincome",
+    "age15to24",
+    "retprice"
+  ),
+  predictors.op =  "mean",
+  # the operator
+  time.predictors.prior = 1980:1988,
+  #the entire time frame from the #beginning to the end
+  special.predictors = list(
+    list("beer", 1984:1988,  "mean"),
+    list("cigsale", 1988,  "mean"),
+    list("cigsale", 1980,  "mean"),
+    list("cigsale", 1975,  "mean")
+  ), # these special predictors are either a specific value or average of values
+  dependent =  "cigsale",
+  # dv
+  unit.variable =  "stateno2",
+  #identifying unit numbers
+  unit.names.variable =  "state",
+  #identifying unit names
+  time.variable =  "year",
+  #time-periods
+  treatment.identifier = 3, # California
+  #the treated case
+  controls.identifier = c(1,2,4:39),
+  #the control cases; all others #except number 3
+  time.optimize.ssr = 1970:1988,
+  #the time-period over which to optimize
+  time.plot = 1970:2000
+)
+#the entire time period before/after the treatment
+
+#### Running Synth
+synth.out = synth(data.prep.obj = dataprep.out, method = "BFGS")
+# BFGS (Broyden,Fletcher, Goldfarb, and Shanno, 1970)
+
+#### Generating Tables
+synth.tables = synth.tab(dataprep.res = dataprep.out, synth.res = synth.out)
+
+#### Tables of Weights
+synth.tables$tab.w # Table 2 in ADH(2010)
+
+#### Tables of Predictor Means
+synth.tables$tab.pred  # Table 1 in ADH(2010)
+
+
+
+```
+
+# Plots
+```{r}
+
+#### Plot of California vs Synthetic California (Figure 2 in ADH)
+path.plot(
+  synth.res = synth.out,
+  dataprep.res = dataprep.out,
+  Ylab = "per-capita cigarette sales (in packs)",
+  Xlab = "year",
+  Ylim = c(0, 140),
+  Legend = c("California",
+             "synthetic California"),
+  Legend.position = "bottomleft"
+)
+
+#### Gap plots (Figure 3 in ADH)
+gaps.plot(
+  synth.res = synth.out,
+  dataprep.res = dataprep.out,
+  Ylab =  "gap in per-capita cigarette sales (in packs)",
+  Xlab =  "year",
+  Ylim = c(-30, 30),
+  Main = NA
+)
+```
+
