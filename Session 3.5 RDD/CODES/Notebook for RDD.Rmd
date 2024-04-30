@@ -7,6 +7,7 @@ date: "`r format(Sys.time(), '%d %B %Y')`"
 output:
   html_document:
     theme: lumen
+    code_folding: show
     toc: yes
     toc_float: yes
     toc_depth: 4
@@ -21,18 +22,19 @@ editor_options:
 # Codes for Regression Discontinuity Design
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
-packages <- c("tidyverse", "haven", "gtsummary", "ggpubr", "ggplot2", "rdrobust", "rddensity", "here");for(pack in packages){
+packages <- c("tidyverse", "haven", "gtsummary", "jtools", "ggplot2", "rdrobust", "rddensity", "here");for(pack in packages){
   if(!require(pack, character.only = TRUE, quietly = TRUE)){
     install.packages(pack, dependencies = TRUE)
     require(pack, character.only = TRUE)
   }
   # Clean up the workspace
   rm(pack)
-};theme_set(theme_pubclean())
+};theme_set(theme_apa())
 
 ```
 
-# Slide 2
+# Slide 3
+## Check whether there is any evidence of manipulation of the eligibility index 
 
 ```{r}
 #Load dataset
@@ -44,14 +46,14 @@ hisp_data <- hisp_data %>%
 ggplot(hisp_data, aes(x = poverty_index)) + 
   geom_vline(xintercept = 58, linetype = 'dotted') +
   geom_density()+
-  ggtitle("KDE Plot of Poverty index")
+  ggtitle("Density Plot of Poverty index")
 
-# rdplotdensity(rdd = rddensity(hisp_data$poverty_index, c = 58), 
-#               X = hisp_data$poverty_index, 
-#               type = "both")
+
 ```
 
-# Slide 3
+
+# Slide 4
+## Can you apply a sharp RDD? 
 
 ```{r, warning = FALSE}
 #Categorize > 58 and <= 58
@@ -63,20 +65,22 @@ rdplot(y = hisp_data_treatment$enrolled,
        c = 58,
        p = 1,
        nbins = c(58, 42),
-       x.label = "Running variable (Poverty index)",
-       y.label = "Outcome variable (Enrolled)"
-)
+       x.label = "Forcing variable (Poverty index)",
+       y.label = "Percent of households that participate (Enrolled)",
+       )
 
 # Plotting
 ggplot(hisp_data_treatment, aes(y = enrolled, x = poverty_index, color = factor(D))) +
-  geom_vline(xintercept = 58) +
+  geom_vline(xintercept = 58, linetype = "dotted") +
   geom_point() +
-  labs(x = "Poverty Index", y = "Enrolled")
+  ggtitle("Enrolled vs Poverty Index") + 
+  labs(x = "Forcing variable (Poverty index)", y = "Outcome variable (Enrolled)")
 
 
 ```
 
-# Slide 4
+# Slide 5
+## Estimate the sharp RDD estimates. Plot the difference in the health expenditures between the eligible and non-eligible. 
 
 ```{r}
 # Normalize the poverty index at "0"
@@ -94,10 +98,13 @@ hisp_data_model$he_pred1<- reg_model$fitted.values
 
 # Plotting
 ggplot(hisp_data_model, aes(x = poverty_index, y = he_pred1, color = factor(D))) +
-  geom_point() + labs(x = "Poverty Index", y = "Predicted Health Expenditures")
+    geom_vline(xintercept = 58, linetype = "dotted") +
+  ggtitle("RDD Plot") + 
+  geom_point() + labs(x = "Forcing variable (Poverty index)", y = "Predicted Health Expenditures")
 ```
 
-# Slide 5
+# Slide 6
+## Estimate the effect using the rdrobust command
 
 ```{r}
 rdd <- rdrobust(
@@ -109,7 +116,9 @@ rdd <- rdrobust(
 summary(rdd)
 ```
 
-# Slide 6
+# Slide 7
+## Estimate the impact using RDD with controls
+Use the following variables as your controls: age_hh age_sp educ_hh educ_sp female_hh indigenous hhsize dirtfloor bathroom land hospital_distance
 
 ```{r}
 # Define the model formula
@@ -125,7 +134,10 @@ summary(reg_model_cov)
 
 ```
 
-# Slide 7
+# Slide 8
+## Introduce in your regression model squared, cubic, and quartic poverty score terms.
+
+
 
 ```{r}
 # Generating higher order terms
@@ -153,7 +165,9 @@ summary(reg_model_cov_polynomial)
 
 ```
 
-# Slide 8
+# Slide 9
+## Plot the fitted value of out-of-pocket health expenditures estimated in the last equation against the poverty score. Is there any evidence of non-linearity?
+
 
 ```{r}
 ######################SLIDE 8####################################
@@ -161,11 +175,14 @@ hisp_data_model$he_pred2 <- reg_model_cov_polynomial$fitted.values
 
 # Plotting
 ggplot(hisp_data_model, aes(x = poverty_index, y = he_pred2, color = factor(D))) +
-  geom_point() + labs(x = "Poverty Index", y = "Predicted Health Expenditures")
+  geom_point() + geom_vline(xintercept = 58, linetype = "dotted") + labs(x = "Forcing variable (Poverty index)", y = "Predicted Health Expenditures")
 
 ```
 
-# Slide 9
+# Slide 10
+## Perform a “false experiment” using the RDD model in the baseline period.
+Plot the fitted value of out-of-pocket health expenditures estimated in the last step against the poverty score. 
+
 
 ```{r}
 # Filter the data
@@ -186,6 +203,7 @@ ggplot(filtered_data, aes(x = poverty_index, y = he_pred3, color = factor(D))) +
 ```
 
 # Slide 10
+## Use the rbrobust command to estimate the impact
 
 ```{r}
 rdd <- rdrobust(

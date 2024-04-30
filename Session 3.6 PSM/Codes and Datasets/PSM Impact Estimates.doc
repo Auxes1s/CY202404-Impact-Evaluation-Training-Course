@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<table class="texreg" style="margin: 10px auto;border-collapse: collapse;border-spacing: 0px;caption-side: bottom;color: #000000;border-top: 2px solid #000000;">
+<caption>Evaluating HISP: Matching on Baseline Characteristics and Regression Analysis</caption>
+<thead>
+<tr>
+<th style="padding-left: 5px;padding-right: 5px;">&nbsp;</th>
+<th style="padding-left: 5px;padding-right: 5px;">Limited Set (Probit)</th>
+<th style="padding-left: 5px;padding-right: 5px;">Full Set (Probit)</th>
+<th style="padding-left: 5px;padding-right: 5px;">Limited Set (Logit)</th>
+<th style="padding-left: 5px;padding-right: 5px;">Full Set (Logit)</th>
+</tr>
+</thead>
+<tbody>
+<tr style="border-top: 1px solid #000000;">
+<td style="padding-left: 5px;padding-right: 5px;">(Intercept)</td>
+<td style="padding-left: 5px;padding-right: 5px;">18.96<sup>&#42;&#42;&#42;</sup></td>
+<td style="padding-left: 5px;padding-right: 5px;">17.84<sup>&#42;&#42;&#42;</sup></td>
+<td style="padding-left: 5px;padding-right: 5px;">18.97<sup>&#42;&#42;&#42;</sup></td>
+<td style="padding-left: 5px;padding-right: 5px;">18.04<sup>&#42;&#42;&#42;</sup></td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">&nbsp;</td>
+<td style="padding-left: 5px;padding-right: 5px;">(0.30)</td>
+<td style="padding-left: 5px;padding-right: 5px;">(0.29)</td>
+<td style="padding-left: 5px;padding-right: 5px;">(0.31)</td>
+<td style="padding-left: 5px;padding-right: 5px;">(0.30)</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">enrolled</td>
+<td style="padding-left: 5px;padding-right: 5px;">-11.12<sup>&#42;&#42;&#42;</sup></td>
+<td style="padding-left: 5px;padding-right: 5px;">-10.00<sup>&#42;&#42;&#42;</sup></td>
+<td style="padding-left: 5px;padding-right: 5px;">-11.13<sup>&#42;&#42;&#42;</sup></td>
+<td style="padding-left: 5px;padding-right: 5px;">-10.20<sup>&#42;&#42;&#42;</sup></td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">&nbsp;</td>
+<td style="padding-left: 5px;padding-right: 5px;">(0.39)</td>
+<td style="padding-left: 5px;padding-right: 5px;">(0.37)</td>
+<td style="padding-left: 5px;padding-right: 5px;">(0.39)</td>
+<td style="padding-left: 5px;padding-right: 5px;">(0.38)</td>
+</tr>
+<tr style="border-top: 1px solid #000000;">
+<td style="padding-left: 5px;padding-right: 5px;">R<sup>2</sup></td>
+<td style="padding-left: 5px;padding-right: 5px;">0.30</td>
+<td style="padding-left: 5px;padding-right: 5px;">0.28</td>
+<td style="padding-left: 5px;padding-right: 5px;">0.30</td>
+<td style="padding-left: 5px;padding-right: 5px;">0.27</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">Adj. R<sup>2</sup></td>
+<td style="padding-left: 5px;padding-right: 5px;">0.30</td>
+<td style="padding-left: 5px;padding-right: 5px;">0.28</td>
+<td style="padding-left: 5px;padding-right: 5px;">0.30</td>
+<td style="padding-left: 5px;padding-right: 5px;">0.27</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">Statistic</td>
+<td style="padding-left: 5px;padding-right: 5px;">816.31</td>
+<td style="padding-left: 5px;padding-right: 5px;">734.53</td>
+<td style="padding-left: 5px;padding-right: 5px;">794.50</td>
+<td style="padding-left: 5px;padding-right: 5px;">706.62</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">P Value</td>
+<td style="padding-left: 5px;padding-right: 5px;">0.00</td>
+<td style="padding-left: 5px;padding-right: 5px;">0.00</td>
+<td style="padding-left: 5px;padding-right: 5px;">0.00</td>
+<td style="padding-left: 5px;padding-right: 5px;">0.00</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">DF Resid.</td>
+<td style="padding-left: 5px;padding-right: 5px;">67.36</td>
+<td style="padding-left: 5px;padding-right: 5px;">72.89</td>
+<td style="padding-left: 5px;padding-right: 5px;">67.08</td>
+<td style="padding-left: 5px;padding-right: 5px;">76.04</td>
+</tr>
+<tr style="border-bottom: 2px solid #000000;">
+<td style="padding-left: 5px;padding-right: 5px;">nobs</td>
+<td style="padding-left: 5px;padding-right: 5px;">5928</td>
+<td style="padding-left: 5px;padding-right: 5px;">5928</td>
+<td style="padding-left: 5px;padding-right: 5px;">5928</td>
+<td style="padding-left: 5px;padding-right: 5px;">5928</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<td style="font-size: 0.8em;" colspan="5"><sup>&#42;&#42;&#42;</sup>p &lt; 0.001; <sup>&#42;&#42;</sup>p &lt; 0.01; <sup>&#42;</sup>p &lt; 0.05</td>
+</tr>
+</tfoot>
+</table>
