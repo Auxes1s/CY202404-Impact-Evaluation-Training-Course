@@ -1,0 +1,59 @@
+---
+title: "Notebook for Difference in Differences"
+author:
+- name: Dr. Marites M. Tiongco
+  affiliation: DLSU School of Economics
+
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output:
+  html_document:
+    theme: lumen
+    code_folding: show
+    toc: yes
+    toc_float: yes
+    toc_depth: 4
+    number_sections: no
+    highlight: pygments
+    fig_caption: yes
+editor_options:
+  markdown:
+    wrap: 72
+---
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+library(estimatr)
+library(haven)
+library(dplyr)
+library(texreg)
+library(here)
+```
+
+```{r}
+df <- read_dta(here("evaluation.dta"))
+```
+
+
+```{r}
+out_did	<- lm_robust(health_expenditures	~	round	*	enrolled,
+data	=	df	%>%	filter(treatment_locality	==	1),
+clusters	=	locality_identifier)
+out_did_wcov	<- lm_robust(health_expenditures	~	round	*	enrolled	+																												
+age_hh	+	age_sp	+	educ_hh	+	educ_sp	+	
+female_hh	+	indigenous	+	hhsize	+	dirtfloor	+																												
+bathroom	+	land	+	hospital_distance,	
+data	=	df	%>%	filter(treatment_locality	==	1),	
+clusters	=	locality_identifier)
+
+```
+```{r, results = 'asis'}
+htmlreg(list(out_did,	out_did_wcov),	doctype	=	FALSE,								
+custom.coef.map	=	list('enrolled'	=	"Enrollment",																															
+'round'	=	"Round",
+'round:enrolled'	=	"Enrollment	X	Round"),								
+caption	=	"Evaluating	HISP:	Difference-in-Differences	with	
+Regression",
+caption.above	=	TRUE,
+custom.model.names	=	c("No	Covariate	Adjustment",	"With	
+Covariate	Adjustment"))
+```
+
